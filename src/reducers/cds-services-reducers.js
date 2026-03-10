@@ -17,9 +17,10 @@ const getPersistedServices = () => {
   return [];
 };
 
+const LOCALHOST_CDS_URL = 'http://localhost:9001/cds-services';
 const initialState = {
   configuredServices: {},
-  configuredServiceUrls: getPersistedServices(),
+  configuredServiceUrls: uniq([LOCALHOST_CDS_URL, ...getPersistedServices()]),
   defaultUrl: 'https://sandbox-services.cds-hooks.org/cds-services',
   testServicesUrl: null,
 };
