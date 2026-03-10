@@ -25,8 +25,19 @@ function retrieveAllPatientIds() {
           const patientInfo = { id: '', name: 'Unknown', dob: '' };
           patientInfo.id = patient.resource.id;
           if (Array.isArray(patient.resource.name)) {
-            const familyName = Array.isArray(patient.resource.name[0].family) ? patient.resource.name[0].family.join(' ') : patient.resource.name[0].family;
-            patientInfo.name = `${patient.resource.name[0].given.join(' ')} ${familyName}`;
+            const nameObj = patient.resource.name[0];
+            let given = '';
+            let family = '';
+            if (Array.isArray(nameObj.given) && nameObj.given.length > 0) {
+              given = nameObj.given.join(' ');
+            }
+            if (typeof nameObj.family === 'string') {
+              family = nameObj.family;
+            } else if (Array.isArray(nameObj.family)) {
+              family = nameObj.family.join(' ');
+            }
+            const fullName = [given, family].filter(Boolean).join(' ');
+            patientInfo.name = fullName || 'Unknown';
           }
           patientInfo.dob = patient.resource.birthDate;
           patientInfoList.push(patientInfo);

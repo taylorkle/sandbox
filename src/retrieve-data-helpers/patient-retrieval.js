@@ -28,8 +28,12 @@ function retrievePatient(testPatient) {
     } else if (!patient) {
       const parsed = queryString.parse(window.location.search);
       patient = parsed.patientId
-        || localStorage.getItem('PERSISTED_patientId')
-        || store.getState().patientState.defaultPatientId;
+        || localStorage.getItem('PERSISTED_patientId');
+      // If still no patient, reject and prompt user selection
+      if (!patient) {
+        store.dispatch(signalFailurePatientRetrieval());
+        return reject(new Error('No patient selected. Please choose a patient.'));
+      }
     }
     axios({
       method: 'get',

@@ -55,25 +55,10 @@ export class PatientEntry extends Component {
        * Flag to determine if the modal is open
        */
       isOpen: this.props.isOpen,
-      /**
-       * String to keep track of user input for the patient ID
-       */
       userInput: '',
-      /**
-       * Flag to determine if an error needs to be displayed on the Field
-       */
       shouldDisplayError: false,
-      /**
-       * Error message to display on the Field
-       */
       errorMessage: '',
-      /**
-       * The ID of the current Patient resource in context
-       */
-      currentPatient: this.props.currentPatientId,
-      /**
-       * The list of the Patient identifiers populated from the currentFhirServer
-       */
+      currentPatient: this.props.currentPatientId || '',
       patients: [],
     };
 
@@ -95,6 +80,10 @@ export class PatientEntry extends Component {
       const patients = [];
       data.forEach((patient) => patients.push({ value: patient.id, label: `${patient.name}, ${patient.dob}` }));
       this.setState({ patients });
+      // If no patient is currently selected, force user to pick one
+      if (!this.props.currentPatientId && patients.length > 0) {
+        this.setState({ shouldDisplayError: true, errorMessage: 'Please select a patient to continue.' });
+      }
     } catch (error) {
       this.setState({ shouldDisplayError: true, errorMessage: 'Error fetching patients from FHIR Server' });
     }
@@ -119,12 +108,13 @@ export class PatientEntry extends Component {
     try {
       await retrievePatient(this.state.userInput).then(() => {
         if (this.props.resolve) { this.props.resolve(); }
+        // Only close modal if patient retrieval succeeded
         this.handleCloseModal();
       });
     } catch (e) {
       this.setState({
         shouldDisplayError: true,
-        errorMessage: 'Failed to retrieve patient from FHIR server. See console for details.',
+        errorMessage: 'Failed to retrieve patient from FHIR server. Please select a different patient.',
       });
     }
   }

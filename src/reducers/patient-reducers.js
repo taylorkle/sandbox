@@ -1,13 +1,13 @@
 import * as types from '../actions/action-types';
 
 const initialState = {
-  defaultPatientId: 'smart-1288992',
-  defaultUser: 'Practitioner/COREPRACTITIONER1',
+  defaultPatientId: '', // No default patient; force user selection
+  defaultUser: '',
   currentUser: '',
   currentPatient: {
-    id: 'smart-1288992',
-    name: 'Daniel X. Adams',
-    birthDate: '1925-12-23',
+    id: '',
+    name: '',
+    birthDate: '',
     patientResource: {},
     conditionsResources: [],
   },
